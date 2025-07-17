@@ -44,23 +44,3 @@ const result2 = await recognize(buffer, {
 });
 console.log(result2.text);
 ```
-
-### CommonJS (require) Example
-
-```js
-const { recognize } = require('@enfpdev/node-uni-ocr');
-const fs = require('fs');
-
-// OCR from file path
-const result = await recognize('test.png');
-console.log(result.text, result.confidence);
-
-// OCR from buffer
-const buffer = fs.readFileSync('test.png');
-const result2 = await recognize(buffer, {
-  languages: ['en', 'ko'],
-  confidence_threshold: 0.5,
-  timeout: 10,
-});
-console.log(result2.text);
-```

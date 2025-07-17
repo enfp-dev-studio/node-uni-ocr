@@ -24,15 +24,18 @@ npm install @enfpdev/node-uni-ocr
 
 ## Usage
 
+
+### ESM (import) Example
+
 ```js
-const { recognize } = require('@enfpdev/node-uni-ocr');
+import { recognize } from '@enfpdev/node-uni-ocr';
+import fs from 'fs';
 
 // OCR from file path
 const result = await recognize('test.png');
 console.log(result.text, result.confidence);
 
 // OCR from buffer
-const fs = require('fs');
 const buffer = fs.readFileSync('test.png');
 const result2 = await recognize(buffer, {
   languages: ['en', 'ko'],
@@ -42,44 +45,22 @@ const result2 = await recognize(buffer, {
 console.log(result2.text);
 ```
 
-### Usage in Electron
+### CommonJS (require) Example
 
-You can use this library in Electron just like in Node.js (recommended: main process).
+```js
+const { recognize } = require('@enfpdev/node-uni-ocr');
+const fs = require('fs');
 
----
+// OCR from file path
+const result = await recognize('test.png');
+console.log(result.text, result.confidence);
 
-pnpm add @napi-rs/package-template
-npm version [<newversion> | major | minor | patch | premajor | preminor | prepatch | prerelease [--preid=<prerelease-id>] | from-git]
-```bash
-## Requirements
-
-- Latest Rust toolchain
-- Node.js 18 or higher (Node-API supported)
-- corepack enabled (for pnpm)
-
-## Build & Test
-
-```bash
-pnpm install
-pnpm build
-pnpm test
-```
-
-## Release
-
-Make sure your **NPM_TOKEN** is set in GitHub Secrets. To release a new version:
-
-```bash
-npm version [patch|minor|major]
-
-```
-
-GitHub Actions will handle the rest (build, test, and publish).
-
----
-
-## License
-
-MIT
-MIT
+// OCR from buffer
+const buffer = fs.readFileSync('test.png');
+const result2 = await recognize(buffer, {
+  languages: ['en', 'ko'],
+  confidence_threshold: 0.5,
+  timeout: 10,
+});
+console.log(result2.text);
 ```

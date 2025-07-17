@@ -6,7 +6,7 @@
   "types": "index.d.ts",
   "browser": "browser.js",
   "repository": {
-    "url": "git+ssh://git@github.com/napi-rs/package-template-pnpm.git",
+    "url": "git+https://github.com/enfp-dev-studio/node-uni-ocr.git",
     "type": "git"
   },
   "license": "MIT",

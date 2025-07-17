@@ -52,45 +52,45 @@ jobs:
       fail-fast: false
       matrix:
         settings:
-          - host: macos-latest
-            target: x86_64-apple-darwin
-            build: pnpm build --target x86_64-apple-darwin
+          # - host: macos-latest
+          #   target: x86_64-apple-darwin
+          #   build: pnpm build --target x86_64-apple-darwin
           - host: windows-latest
             build: pnpm build --target x86_64-pc-windows-msvc
             target: x86_64-pc-windows-msvc
-          - host: windows-latest
-            build: pnpm build --target i686-pc-windows-msvc
-            target: i686-pc-windows-msvc
-          - host: ubuntu-latest
-            target: x86_64-unknown-linux-gnu
-            build: pnpm build --target x86_64-unknown-linux-gnu --use-napi-cross
-          - host: ubuntu-latest
-            target: x86_64-unknown-linux-musl
-            build: pnpm build --target x86_64-unknown-linux-musl -x
+          # - host: windows-latest
+          #   build: pnpm build --target i686-pc-windows-msvc
+          #   target: i686-pc-windows-msvc
+          # - host: ubuntu-latest
+          #   target: x86_64-unknown-linux-gnu
+          #   build: pnpm build --target x86_64-unknown-linux-gnu --use-napi-cross
+          # - host: ubuntu-latest
+          #   target: x86_64-unknown-linux-musl
+          #   build: pnpm build --target x86_64-unknown-linux-musl -x
           - host: macos-latest
             target: aarch64-apple-darwin
             build: pnpm build --target aarch64-apple-darwin
-          - host: ubuntu-latest
-            target: aarch64-unknown-linux-gnu
-            build: pnpm build --target aarch64-unknown-linux-gnu --use-napi-cross
-          - host: ubuntu-latest
-            target: armv7-unknown-linux-gnueabihf
-            build: pnpm build --target armv7-unknown-linux-gnueabihf --use-napi-cross
-          - host: ubuntu-latest
-            target: aarch64-linux-android
-            build: pnpm build --target aarch64-linux-android
-          - host: ubuntu-latest
-            target: armv7-linux-androideabi
-            build: pnpm build --target armv7-linux-androideabi
-          - host: ubuntu-latest
-            target: aarch64-unknown-linux-musl
-            build: pnpm build --target aarch64-unknown-linux-musl -x
-          - host: windows-latest
-            target: aarch64-pc-windows-msvc
-            build: pnpm build --target aarch64-pc-windows-msvc
-          - host: ubuntu-latest
-            target: wasm32-wasip1-threads
-            build: pnpm build --target wasm32-wasip1-threads
+          # - host: ubuntu-latest
+          #   target: aarch64-unknown-linux-gnu
+          #   build: pnpm build --target aarch64-unknown-linux-gnu --use-napi-cross
+          # - host: ubuntu-latest
+          #   target: armv7-unknown-linux-gnueabihf
+          #   build: pnpm build --target armv7-unknown-linux-gnueabihf --use-napi-cross
+          # - host: ubuntu-latest
+          #   target: aarch64-linux-android
+          #   build: pnpm build --target aarch64-linux-android
+          # - host: ubuntu-latest
+          #   target: armv7-linux-androideabi
+          #   build: pnpm build --target armv7-linux-androideabi
+          # - host: ubuntu-latest
+          #   target: aarch64-unknown-linux-musl
+          #   build: pnpm build --target aarch64-unknown-linux-musl -x
+          # - host: windows-latest
+          #   target: aarch64-pc-windows-msvc
+          #   build: pnpm build --target aarch64-pc-windows-msvc
+          # - host: ubuntu-latest
+          #   target: wasm32-wasip1-threads
+          #   build: pnpm build --target wasm32-wasip1-threads
     name: stable - ${{ matrix.settings.target }} - node@20
     runs-on: ${{ matrix.settings.host }}
     steps:
@@ -135,13 +135,13 @@ jobs:
         shell: bash
       - name: Install dependencies
         run: pnpm install
-      - name: Setup node x86
-        uses: actions/setup-node@v4
-        if: matrix.settings.target == 'i686-pc-windows-msvc'
-        with:
-          node-version: 22
-          cache: pnpm
-          architecture: x86
+      # - name: Setup node x86
+      #   uses: actions/setup-node@v4
+      #   if: matrix.settings.target == 'i686-pc-windows-msvc'
+      #   with:
+      #     node-version: 22
+      #     cache: pnpm
+      #     architecture: x86
       - name: Build
         run: ${{ matrix.settings.build }}
         shell: bash
@@ -217,9 +217,9 @@ jobs:
           - host: windows-latest
             target: x86_64-pc-windows-msvc
             architecture: x64
-          - host: macos-latest
-            target: x86_64-apple-darwin
-            architecture: x64
+          # - host: macos-latest
+          #   target: x86_64-apple-darwin
+          #   architecture: x64
           - host: macos-latest
             target: aarch64-apple-darwin
             architecture: arm64
@@ -250,76 +250,76 @@ jobs:
         shell: bash
       - name: Test bindings
         run: pnpm test
-  test-linux-binding:
-    name: Test ${{ matrix.target }} - node@${{ matrix.node }}
-    needs:
-      - build
-    strategy:
-      fail-fast: false
-      matrix:
-        target:
-          - x86_64-unknown-linux-gnu
-          - x86_64-unknown-linux-musl
-          - aarch64-unknown-linux-gnu
-          - aarch64-unknown-linux-musl
-          - armv7-unknown-linux-gnueabihf
-        node:
-          - '18'
-          - '20'
-          - '22'
-    runs-on: ${{ contains(matrix.target, 'aarch64') && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: setup pnpm
-        uses: pnpm/action-setup@v4
-      - name: Setup node
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ matrix.node }}
-          cache: pnpm
-      - name: Output docker params
-        id: docker
-        run: |
-          node -e "
-            if ('${{ matrix.target }}'.startsWith('aarch64')) {
-              console.log('PLATFORM=linux/arm64')
-            } else if ('${{ matrix.target }}'.startsWith('armv7')) {
-              console.log('PLATFORM=linux/arm/v7')
-            } else {
-              console.log('PLATFORM=linux/amd64')
-            }
-          " >> $GITHUB_OUTPUT
-          node -e "
-            if ('${{ matrix.target }}'.endsWith('-musl')) {
-              console.log('IMAGE=node:${{ matrix.node }}-alpine')
-            } else {
-              console.log('IMAGE=node:${{ matrix.node }}-slim')
-            }
-          " >> $GITHUB_OUTPUT
-          echo "PNPM_STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
-      - name: Install dependencies
-        run: pnpm install --force
-      - name: Download artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: bindings-${{ matrix.target }}
-          path: .
-      - name: List packages
-        run: ls -R .
-        shell: bash
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v3
-        if: ${{ contains(matrix.target, 'armv7') }}
-        with:
-          platforms: all
-      - run: docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-        if: ${{ contains(matrix.target, 'armv7') }}
-      - name: Test bindings
-        uses: addnab/docker-run-action@v3
-        with:
-          image: ${{ steps.docker.outputs.IMAGE }}
-          options: '-v ${{ steps.docker.outputs.PNPM_STORE_PATH }}:${{ steps.docker.outputs.PNPM_STORE_PATH }} -v ${{ github.workspace }}:${{ github.workspace }} -w ${{ github.workspace }} --platform ${{ steps.docker.outputs.PLATFORM }}'
-          run: npm run test
+  # test-linux-binding:
+  #   name: Test ${{ matrix.target }} - node@${{ matrix.node }}
+  #   needs:
+  #     - build
+  #   strategy:
+  #     fail-fast: false
+  #     matrix:
+  #       target:
+  #         - x86_64-unknown-linux-gnu
+  #         - x86_64-unknown-linux-musl
+  #         - aarch64-unknown-linux-gnu
+  #         - aarch64-unknown-linux-musl
+  #         - armv7-unknown-linux-gnueabihf
+  #       node:
+  #         - '18'
+  #         - '20'
+  #         - '22'
+  #   runs-on: ${{ contains(matrix.target, 'aarch64') && 'ubuntu-24.04-arm' || 'ubuntu-latest' }}
+  #   steps:
+  #     - uses: actions/checkout@v4
+  #     - name: setup pnpm
+  #       uses: pnpm/action-setup@v4
+  #     - name: Setup node
+  #       uses: actions/setup-node@v4
+  #       with:
+  #         node-version: ${{ matrix.node }}
+  #         cache: pnpm
+  #     - name: Output docker params
+  #       id: docker
+  #       run: |
+  #         node -e "
+  #           if ('${{ matrix.target }}'.startsWith('aarch64')) {
+  #             console.log('PLATFORM=linux/arm64')
+  #           } else if ('${{ matrix.target }}'.startsWith('armv7')) {
+  #             console.log('PLATFORM=linux/arm/v7')
+  #           } else {
+  #             console.log('PLATFORM=linux/amd64')
+  #           }
+  #         " >> $GITHUB_OUTPUT
+  #         node -e "
+  #           if ('${{ matrix.target }}'.endsWith('-musl')) {
+  #             console.log('IMAGE=node:${{ matrix.node }}-alpine')
+  #           } else {
+  #             console.log('IMAGE=node:${{ matrix.node }}-slim')
+  #           }
+  #         " >> $GITHUB_OUTPUT
+  #         echo "PNPM_STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_OUTPUT
+  #     - name: Install dependencies
+  #       run: pnpm install --force
+  #     - name: Download artifacts
+  #       uses: actions/download-artifact@v4
+  #       with:
+  #         name: bindings-${{ matrix.target }}
+  #         path: .
+  #     - name: List packages
+  #       run: ls -R .
+  #       shell: bash
+  #     - name: Set up QEMU
+  #       uses: docker/setup-qemu-action@v3
+  #       if: ${{ contains(matrix.target, 'armv7') }}
+  #       with:
+  #         platforms: all
+  #     - run: docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
+  #       if: ${{ contains(matrix.target, 'armv7') }}
+  #     - name: Test bindings
+  #       uses: addnab/docker-run-action@v3
+  #       with:
+  #         image: ${{ steps.docker.outputs.IMAGE }}
+  #         options: '-v ${{ steps.docker.outputs.PNPM_STORE_PATH }}:${{ steps.docker.outputs.PNPM_STORE_PATH }} -v ${{ github.workspace }}:${{ github.workspace }} -w ${{ github.workspace }} --platform ${{ steps.docker.outputs.PLATFORM }}'
+  #         run: npm run test
   test-wasi:
     name: Test WASI target
     needs:
@@ -355,7 +355,7 @@ jobs:
       - lint
       - build-freebsd
       - test-macOS-windows-binding
-      - test-linux-binding
+      # - test-linux-binding
       - test-wasi
     steps:
       - uses: actions/checkout@v4

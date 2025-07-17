@@ -11,8 +11,8 @@ crate-type = ["cdylib"]
 [dependencies]
 napi = { version = "3.0.0-alpha", features = ["async"] }
 napi-derive = "3.0.0-alpha"
-uni-ocr     = "0.1.5"
-image       = "0.25.6"
+uni-ocr = "0.1.5"
+image = "0.25.6"
 # futures     = "0.3.31"
 
 [build-dependencies]

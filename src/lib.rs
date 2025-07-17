@@ -60,13 +60,13 @@ pub async fn recognize(
   // 이미지 로딩 (DynamicImage)
   let dyn_image: DynamicImage = match image {
     Either::A(path) => image::open(path)
-      .map_err(|e| Error::from_reason(format!("Failed to open image file: {:?}", e)))?,
+      .map_err(|e| Error::from_reason(format!("Failed to open image file: {e:?}")))?,
     Either::B(buffer) => image::load_from_memory(&buffer)
-      .map_err(|e| Error::from_reason(format!("Failed to decode image buffer: {:?}", e)))?,
+      .map_err(|e| Error::from_reason(format!("Failed to decode image buffer: {e:?}")))?,
   };
 
   let engine = OcrEngine::new(OcrProvider::Auto)
-    .map_err(|e| Error::from_reason(format!("Failed to create OCR engine: {:?}", e)))?
+    .map_err(|e| Error::from_reason(format!("Failed to create OCR engine: {e:?}")))?
     .with_options(ocr_options);
 
   // OCR 엔진 초기화
@@ -85,6 +85,6 @@ pub async fn recognize(
       text: result.0,
       confidence: result.1,
     }),
-    Err(e) => Err(Error::from_reason(format!("Recognition failed: {:?}", e))),
+    Err(e) => Err(Error::from_reason(format!("Recognition failed: {e:?}"))),
   }
 }

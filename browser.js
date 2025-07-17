@@ -1,1 +1,1 @@
-export * from '@napi-rs/package-template-pnpm-wasm32-wasi'
+export * from '@enfpdev/node-uni-ocr-wasm32-wasi'

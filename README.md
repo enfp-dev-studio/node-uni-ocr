@@ -1,85 +1,85 @@
-# `@napi-rs/package-template`
 
-![https://github.com/napi-rs/package-template/actions](https://github.com/napi-rs/package-template/workflows/CI/badge.svg)
 
-> Template project for writing node packages with napi-rs.
 
-# Usage
+# @enfpdev/node-uni-ocr
 
-1. Click **Use this template**.
-2. **Clone** your project.
-3. Run `pnpm install` to install dependencies.
-4. Run `npx napi rename -n [name]` command under the project folder to rename your package.
+![CI](https://github.com/enfp-dev-studio/node-uni-ocr/actions/workflows/CI.yml/badge.svg)
 
-## Install this test package
+## Description
 
-```
-pnpm add @napi-rs/package-template
+**@enfpdev/node-uni-ocr** is a native Node.js library that brings system-level OCR (Optical Character Recognition) to Node.js and Electron by porting the [uniOCR](https://github.com/hiroi-sora/uni-ocr) engine (written in Rust) via [napi-rs](https://napi.rs/).
+
+It enables easy, cross-platform OCR functionality (Windows, macOS, and experimental WASI/Linux) without requiring users to set up complex build tools or environments.
+
+---
+
+
+## Installation
+
+```bash
+pnpm add @enfpdev/node-uni-ocr
+# or
+npm install @enfpdev/node-uni-ocr
 ```
 
 ## Usage
 
-### Build
+```js
+const { recognize } = require('@enfpdev/node-uni-ocr');
 
-After `pnpm build` command, you can see `package-template.[darwin|win32|linux].node` file in project root. This is the native addon built from [lib.rs](./src/lib.rs).
+// OCR from file path
+const result = await recognize('test.png');
+console.log(result.text, result.confidence);
 
-### Test
+// OCR from buffer
+const fs = require('fs');
+const buffer = fs.readFileSync('test.png');
+const result2 = await recognize(buffer, {
+  languages: ['en', 'ko'],
+  confidence_threshold: 0.5,
+  timeout: 10,
+});
+console.log(result2.text);
+```
 
-With [ava](https://github.com/avajs/ava), run `pnpm test` to testing native addon. You can also switch to another testing framework if you want.
+### Usage in Electron
 
-### CI
+You can use this library in Electron just like in Node.js (recommended: main process).
 
-With GitHub Actions, each commit and pull request will be built and tested automatically in [`node@18`, `node@20`] x [`macOS`, `Linux`, `Windows`] matrix. You will never be afraid of the native addon broken in these platforms.
+---
 
-### Release
+pnpm add @napi-rs/package-template
+npm version [<newversion> | major | minor | patch | premajor | preminor | prepatch | prerelease [--preid=<prerelease-id>] | from-git]
+```bash
+## Requirements
 
-Release native package is very difficult in old days. Native packages may ask developers who use it to install `build toolchain` like `gcc/llvm`, `node-gyp` or something more.
+- Latest Rust toolchain
+- Node.js 18 or higher (Node-API supported)
+- corepack enabled (for pnpm)
 
-With `GitHub actions`, we can easily prebuild a `binary` for major platforms. And with `N-API`, we should never be afraid of **ABI Compatible**.
-
-The other problem is how to deliver prebuild `binary` to users. Downloading it in `postinstall` script is a common way that most packages do it right now. The problem with this solution is it introduced many other packages to download binary that has not been used by `runtime codes`. The other problem is some users may not easily download the binary from `GitHub/CDN` if they are behind a private network (But in most cases, they have a private NPM mirror).
-
-In this package, we choose a better way to solve this problem. We release different `npm packages` for different platforms. And add it to `optionalDependencies` before releasing the `Major` package to npm.
-
-`NPM` will choose which native package should download from `registry` automatically. You can see [npm](./npm) dir for details. And you can also run `pnpm add @napi-rs/package-template` to see how it works.
-
-## Develop requirements
-
-- Install the latest `Rust`
-- Install `Node.js@16+` which fully supported `Node-API`
-- Run `corepack enable`
-
-## Test in local
-
-- pnpm
-- pnpm build
-- pnpm test
-
-And you will see:
+## Build & Test
 
 ```bash
-$ ava --verbose
-
-  ✔ sync function from native code
-  ✔ sleep function from native code (201ms)
-  ─
-
-  2 tests passed
-✨  Done in 1.12s.
+pnpm install
+pnpm build
+pnpm test
 ```
 
-## Release package
+## Release
 
-Ensure you have set your **NPM_TOKEN** in the `GitHub` project setting.
+Make sure your **NPM_TOKEN** is set in GitHub Secrets. To release a new version:
 
-In `Settings -> Secrets`, add **NPM_TOKEN** into it.
-
-When you want to release the package:
+```bash
+npm version [patch|minor|major]
 
 ```
-npm version [<newversion> | major | minor | patch | premajor | preminor | prepatch | prerelease [--preid=<prerelease-id>] | from-git]
 
-git push
+GitHub Actions will handle the rest (build, test, and publish).
+
+---
+
+## License
+
+MIT
+MIT
 ```
-
-GitHub actions will do the rest job for you.

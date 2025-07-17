@@ -1,9 +1,9 @@
 #![deny(clippy::all)]
 
-use napi_derive::napi;
 use image::DynamicImage;
 use napi::bindgen_prelude::*;
 use napi::{Error, Result};
+use napi_derive::napi;
 use std::time::Duration;
 use uni_ocr::{Language, OcrEngine, OcrOptions, OcrProvider};
 
